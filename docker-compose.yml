@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  aimock:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.json:/app/config.json
+    environment:
+      - GIN_MODE=release
