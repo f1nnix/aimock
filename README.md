@@ -26,7 +26,7 @@ Usefull to complex pipelines and flows load testing.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/aimock.git
+git clone https://github.com/f1nnix/aimock.git
 cd aimock
 
 # Build the binary
