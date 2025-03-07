@@ -233,8 +233,8 @@ type ModelsResponse struct {
 func handleChatCompletions(c *gin.Context, config *Config) {
 	var req ChatCompletionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		// Log warning but continue processing with default values
+		log.Printf("Warning: Malformed chat completion request: %v. Continuing with default values.", err)
 	}
 
 	// Check if the requested model is supported
@@ -261,6 +261,16 @@ func handleChatCompletions(c *gin.Context, config *Config) {
 	// If no model specified, use the first available
 	if req.Model == "" && len(config.Models.Chat) > 0 {
 		req.Model = config.Models.Chat[0]
+	}
+
+	// Ensure we have messages to process
+	if req.Messages == nil {
+		req.Messages = []ChatCompletionMessage{
+			{
+				Role:    "user",
+				Content: "Hello",
+			},
+		}
 	}
 
 	// Generate a mock response
@@ -300,8 +310,8 @@ func handleChatCompletions(c *gin.Context, config *Config) {
 func handleEmbeddings(c *gin.Context, config *Config) {
 	var req EmbeddingRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		// Log warning but continue processing with default values
+		log.Printf("Warning: Malformed embedding request: %v. Continuing with default values.", err)
 	}
 
 	// Check if the requested model is supported
@@ -328,6 +338,11 @@ func handleEmbeddings(c *gin.Context, config *Config) {
 	// If no model specified, use the first available
 	if req.Model == "" && len(config.Models.Embedding) > 0 {
 		req.Model = config.Models.Embedding[0]
+	}
+
+	// Ensure we have input to process
+	if req.Input == nil {
+		req.Input = []string{"Default input text"}
 	}
 
 	// Generate mock embeddings

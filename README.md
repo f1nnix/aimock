@@ -13,6 +13,7 @@ Usefull to complex pipelines and flows load testing.
 - Configurable response latency (min/max)
 - Supports multiple models
 - Simple configuration via JSON file or command-line flags
+- Tolerant of malformed request data (continues with default values)
 
 ## Installation
 
@@ -127,6 +128,29 @@ Example request:
 
 ```
 GET /v1/models
+```
+
+## Handling Malformed Requests
+
+The service is designed to be tolerant of malformed or incomplete request data. When a request with incorrect data shape is received:
+
+- The service logs a warning about the malformed request
+- Processing continues with default values for missing fields
+- A valid response is still returned
+
+This is particularly useful for testing error handling in your applications or for simulating scenarios where the request data might be corrupted.
+
+Example of a malformed request that will still work:
+```json
+{
+  "model": "gpt-3.5-turbo"
+  // Missing closing bracket and missing required 'messages' field
+}
+```
+
+You can test this behavior using the included `test_malformed.sh` script:
+```bash
+./test_malformed.sh
 ```
 
 ## Using with OpenAI Client Libraries
